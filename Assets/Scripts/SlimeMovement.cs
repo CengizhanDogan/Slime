@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class SlimeMovement : MonoBehaviour
 {
@@ -8,10 +9,12 @@ public class SlimeMovement : MonoBehaviour
     public Animator anim;
 
     [Header("Gameplay Settings")]
-    public float speed = 0.5f;
+    public float speed = 40f;
 
     [Header("Fields")]
-    Vector2 movement;
+    private bool isDashing = false;
+    private Vector3 target;
+    private Vector3 mousePos;
 
     private void Update()
     {
@@ -22,41 +25,32 @@ public class SlimeMovement : MonoBehaviour
 
             case GameState.Slime:
                 InputControl();
+                Dash();
                 break;
             case GameState.End:
                 break;
         }
     }
 
-    void InputControl()
+    private void InputControl()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+        if (!isDashing)
         {
-            transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, 180, transform.rotation.z));
+            target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            target.z = transform.position.z;
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
         }
-        if (Input.GetKeyDown(KeyCode.D))
+    }
+
+    private void Dash()
+    {
+        if (Input.GetMouseButtonDown(0))
         {
-            transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, 0, transform.rotation.z));
-        }
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A))
-        {
-            transform.Translate(Vector2.right * speed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.W))
-        {
-            transform.Translate(Vector2.up * speed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            transform.Translate(Vector2.down * speed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.W))
-        {
-            anim.SetBool("Walk", true);
-        }
-        else
-        {
-            anim.SetBool("Walk", false);
+            isDashing = true;
+            this.gameObject.transform.DOMove(target, 0.5f).OnComplete(() =>
+            {
+                isDashing = false;
+            });
         }
     }
 }
