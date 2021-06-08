@@ -625,6 +625,7 @@ MonoBehaviour:
   anim: {fileID: 2075445663}
   sp: {fileID: 2075445664}
   speed: 2
+  _originalalpha: 50
 --- !u!50 &2075445667
 Rigidbody2D:
   serializedVersion: 4

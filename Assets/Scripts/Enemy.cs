@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class Enemy : MonoBehaviour
 {
+    public static Enemy Instance;
+
     [Header("Game Components")]
     public Animator anim;
     public GameObject target;
@@ -15,6 +17,11 @@ public abstract class Enemy : MonoBehaviour
     public float damageDelay;
     public float healthPoint;
     public bool damage;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     public void AbstractUpdate()
     {
@@ -50,7 +57,7 @@ public abstract class Enemy : MonoBehaviour
     {
         if (damage)
         {
-            Debug.Log("Damage");
+            //Debug.Log("Damage");
         }
     }
     public virtual void Death()

@@ -17,9 +17,13 @@ public class SlimeMovement : MonoBehaviour
     private Vector3 target;
     private float possDiff;
 
+    private SpriteRenderer _sRenderer;
+    private Color _spriteColour;
+    public float _originalalpha;
+
+
     private void Update()
     {
-
         sp.sortingOrder = -(int)transform.position.y;
 
         switch (GameManager.Instance.currentState)
@@ -72,6 +76,13 @@ public class SlimeMovement : MonoBehaviour
         {
             anim.SetBool("Walk", false);
         }
+
+        if (Enemy.Instance.damage)
+        {
+            Debug.Log("Hit");
+            Invoke("DoTransparent", 0.3f);
+            Invoke("CancelTransparent", 0.6f);
+        }
     }
 
     private void Dash()
@@ -91,5 +102,15 @@ public class SlimeMovement : MonoBehaviour
                 collision.gameObject.GetComponent<BasicSkeleton>().healthPoint--;
             }
         }
+    }
+
+    private void DoTransparent()
+    {
+        this.GetComponent<SpriteRenderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+    }
+
+    private void CancelTransparent()
+    {
+        this.GetComponent<SpriteRenderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 1f);
     }
 }
