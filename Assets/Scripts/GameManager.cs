@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public GameState currentState;
-    public AiState aiState;
+    
 
     private void Awake()
     {
@@ -22,10 +22,5 @@ public enum GameState
     End
 }
 
-public enum AiState
-{
-    Move,
-    Attack,
-    Death
-}
+
 

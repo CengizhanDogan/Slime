@@ -5,10 +5,14 @@ using UnityEngine;
 public abstract class Enemy : MonoBehaviour
 {
     public static Enemy Instance;
+    public AiState aiState;
 
     [Header("Game Components")]
     public Animator anim;
+    public Animator poofAnim;
     public GameObject target;
+    public GameObject itemDrop;
+    public GameObject itemDropClone;
     public SpriteRenderer sp;
 
     [Header("Fields")]
@@ -23,13 +27,25 @@ public abstract class Enemy : MonoBehaviour
         Instance = this;
     }
 
+    public enum AiState
+    {
+        Move,
+        Attack,
+        Death
+    }
+
     public void AbstractUpdate()
     {
         sp.sortingOrder = -(int)transform.position.y;
 
         if (healthPoint <= 0)
         {
-            GameManager.Instance.aiState = AiState.Death;
+            aiState = AiState.Death;
+            CancelInvoke("Move");
+        }
+        if (!itemDropClone)
+        {
+            itemDropClone = GameObject.FindGameObjectWithTag("Sword");
         }
     }
 
@@ -63,6 +79,19 @@ public abstract class Enemy : MonoBehaviour
     public virtual void Death()
     {
         anim.SetBool("Death", true);
+        StartCoroutine(DestroyObject());
+        IEnumerator DestroyObject()
+        {
+            yield return new WaitForSeconds(0.8f);
+            sp.enabled = false;
+            if (!itemDropClone && GameManager.Instance.currentState == GameState.Slime)
+            {
+                itemDropClone = Instantiate(itemDrop, transform.position, itemDrop.transform.rotation);
+            }
+            //yield return new WaitForSeconds(0.8f);
+            Destroy(gameObject, 0.8f);
+            poofAnim.SetBool("Poof", true);
+        }
     }
 
 

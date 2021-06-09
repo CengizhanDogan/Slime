@@ -12,10 +12,10 @@ public class BasicSkeleton : Enemy
     {
         AbstractUpdate();
 
-        switch (GameManager.Instance.aiState)
+        switch (aiState)
         {
             case AiState.Move:
-                Move();
+                Invoke("Move", 1);
                 break;
             case AiState.Attack:
                 Attack();
@@ -30,7 +30,7 @@ public class BasicSkeleton : Enemy
     {
         if (other.gameObject.tag == "Player")
         {
-            GameManager.Instance.aiState = AiState.Attack;
+            aiState = AiState.Attack;
             damage = true;
             InvokeRepeating("Damage", damageDelay / 2, damageDelay);
         }
@@ -45,7 +45,7 @@ public class BasicSkeleton : Enemy
             IEnumerator WaitAnim()
             {
                 yield return new WaitForSeconds(1f);
-                GameManager.Instance.aiState = AiState.Move;
+                aiState = AiState.Move;
             }
         }
     }

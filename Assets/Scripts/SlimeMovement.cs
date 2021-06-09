@@ -8,17 +8,19 @@ public class SlimeMovement : MonoBehaviour
     [Header("Game Components")]
     public Animator anim;
     public SpriteRenderer sp;
+    public GameObject poof;
+    public Collider2D slimeColl;
+    public Collider2D swordColl;
 
     [Header("Gameplay Settings")]
     public float speed = 40f;
 
     [Header("Fields")]
     private bool isDashing = false;
+    private bool isSlashing = false;
     private Vector3 target;
     private float possDiff;
 
-    private SpriteRenderer _sRenderer;
-    private Color _spriteColour;
     public float _originalalpha;
 
 
@@ -32,6 +34,10 @@ public class SlimeMovement : MonoBehaviour
                 InputControl();
                 Dash();
                 break;
+            case GameState.Sword:
+                InputControl();
+                Slash();
+                break;
             case GameState.End:
                 break;
         }
@@ -39,6 +45,7 @@ public class SlimeMovement : MonoBehaviour
 
     private void InputControl()
     {
+        
         possDiff = transform.position.x - target.x;
 
         if (transform.position.x < possDiff)
@@ -49,7 +56,7 @@ public class SlimeMovement : MonoBehaviour
         {
             transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, 0, transform.rotation.z));
         }
-        if (!isDashing)
+        if (!isDashing && !isSlashing)
         {
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             target.z = transform.position.z;
@@ -59,9 +66,9 @@ public class SlimeMovement : MonoBehaviour
                 anim.SetBool("Walk", true);
             }
         }
-        else if (isDashing)
+        if (isDashing)
         {
-            anim.SetBool("Dash", true);
+            anim.SetBool("Attack", true);
             anim.SetBool("Walk", false);
             transform.position = Vector3.MoveTowards(transform.position, target, speed * 5 * Time.deltaTime);
             StartCoroutine(DashFalse());
@@ -69,7 +76,26 @@ public class SlimeMovement : MonoBehaviour
             {
                 yield return new WaitForSeconds(0.3f);
                 isDashing = false;
-                anim.SetBool("Dash", false);
+                anim.SetBool("Attack", false);
+            }
+        }
+        if (isSlashing)
+        {
+            target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            target.z = transform.position.z;
+            anim.SetBool("Attack", true);
+            anim.SetBool("Walk", false);
+            slimeColl.enabled = false;
+            swordColl.enabled = true;
+            transform.position = Vector3.MoveTowards(transform.position, target, speed / 2 * Time.deltaTime);
+            StartCoroutine(SlashFalse());
+            IEnumerator SlashFalse()
+            {
+                yield return new WaitForSeconds(1f);
+                isSlashing = false;
+                slimeColl.enabled = true;
+                swordColl.enabled = false;
+                anim.SetBool("Attack", false);
             }
         }
         if (target == transform.position)
@@ -79,7 +105,6 @@ public class SlimeMovement : MonoBehaviour
 
         if (Enemy.Instance.damage)
         {
-            Debug.Log("Hit");
             Invoke("DoTransparent", 0.3f);
             Invoke("CancelTransparent", 0.6f);
         }
@@ -93,6 +118,14 @@ public class SlimeMovement : MonoBehaviour
         }
     }
 
+    private void Slash()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            isSlashing = true;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "SkeletonBasic")
@@ -101,6 +134,19 @@ public class SlimeMovement : MonoBehaviour
             {
                 collision.gameObject.GetComponent<BasicSkeleton>().healthPoint--;
             }
+            if (isSlashing)
+            {
+                collision.gameObject.GetComponent<BasicSkeleton>().healthPoint--;
+            }
+        }
+
+        if (collision.gameObject.tag == "Sword")
+        {
+            GameManager.Instance.currentState = GameState.Sword;
+            anim.SetLayerWeight(0, 1);
+            anim.SetLayerWeight(1, 1);
+            Instantiate(poof, collision.transform.position, Quaternion.identity);
+            Destroy(collision.gameObject, 0.4f);
         }
     }
 
