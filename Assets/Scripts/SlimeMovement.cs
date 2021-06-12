@@ -14,6 +14,8 @@ public class SlimeMovement : MonoBehaviour
 
     [Header("Gameplay Settings")]
     public float speed = 40f;
+    public int healthPoint = 3;
+    private int lastHp;
 
     [Header("Fields")]
     private bool isDashing = false;
@@ -23,7 +25,10 @@ public class SlimeMovement : MonoBehaviour
 
     public float _originalalpha;
 
-
+    private void Start()
+    {
+        lastHp = healthPoint;
+    }
     private void Update()
     {
         sp.sortingOrder = -(int)transform.position.y;
@@ -35,17 +40,85 @@ public class SlimeMovement : MonoBehaviour
                 Dash();
                 break;
             case GameState.Sword:
+                Invoke("Timer", 7);
                 InputControl();
                 Slash();
                 break;
             case GameState.End:
                 break;
         }
+        #region Animation Layers
+        if (healthPoint == 3)
+        {
+            if (GameManager.Instance.currentState == GameState.Slime)
+            {
+                anim.SetLayerWeight(0, 1);
+                anim.SetLayerWeight(1, 0);
+                anim.SetLayerWeight(2, 0);
+                anim.SetLayerWeight(3, 0);
+                anim.SetLayerWeight(4, 0);
+                anim.SetLayerWeight(5, 0);
+
+            }
+            if (GameManager.Instance.currentState == GameState.Sword)
+            {
+                anim.SetLayerWeight(0, 0);
+                anim.SetLayerWeight(1, 1);
+                anim.SetLayerWeight(2, 0);
+                anim.SetLayerWeight(3, 0);
+                anim.SetLayerWeight(4, 0);
+                anim.SetLayerWeight(5, 0);
+            }
+        }
+        if (healthPoint == 2)
+        {
+            if (GameManager.Instance.currentState == GameState.Slime)
+            {
+                anim.SetLayerWeight(0, 0);
+                anim.SetLayerWeight(3, 0);
+                anim.SetLayerWeight(4, 0);
+                anim.SetLayerWeight(1, 0);
+                anim.SetLayerWeight(5, 0);
+                anim.SetLayerWeight(2, 1);
+            }
+            if (GameManager.Instance.currentState == GameState.Sword)
+            {
+                anim.SetLayerWeight(0, 0);
+                anim.SetLayerWeight(3, 0);
+                anim.SetLayerWeight(4, 1);
+                anim.SetLayerWeight(1, 0);
+                anim.SetLayerWeight(5, 0);
+                anim.SetLayerWeight(2, 0);
+            }
+        }
+        if (healthPoint <= 1)
+        {
+            if (GameManager.Instance.currentState == GameState.Slime)
+            {
+                anim.SetLayerWeight(0, 0);
+                anim.SetLayerWeight(3, 1);
+                anim.SetLayerWeight(4, 0);
+                anim.SetLayerWeight(1, 0);
+                anim.SetLayerWeight(5, 0);
+                anim.SetLayerWeight(2, 0);
+            }
+            if (GameManager.Instance.currentState == GameState.Sword)
+            {
+                anim.SetLayerWeight(0, 0);
+                anim.SetLayerWeight(3, 0);
+                anim.SetLayerWeight(4, 0);
+                anim.SetLayerWeight(1, 0);
+                anim.SetLayerWeight(5, 1);
+                anim.SetLayerWeight(2, 0);
+            }
+
+        }
+        #endregion
     }
 
     private void InputControl()
     {
-        
+
         possDiff = transform.position.x - target.x;
 
         if (transform.position.x < possDiff)
@@ -103,10 +176,11 @@ public class SlimeMovement : MonoBehaviour
             anim.SetBool("Walk", false);
         }
 
-        if (Enemy.Instance.damage)
+        if (lastHp != healthPoint)
         {
             Invoke("DoTransparent", 0.3f);
             Invoke("CancelTransparent", 0.6f);
+            lastHp = healthPoint;
         }
     }
 
@@ -126,6 +200,12 @@ public class SlimeMovement : MonoBehaviour
         }
     }
 
+    private void Timer()
+    {
+        GameManager.Instance.currentState = GameState.Slime;
+        CancelInvoke("Timer");
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "SkeletonBasic")
@@ -143,8 +223,6 @@ public class SlimeMovement : MonoBehaviour
         if (collision.gameObject.tag == "Sword")
         {
             GameManager.Instance.currentState = GameState.Sword;
-            anim.SetLayerWeight(0, 1);
-            anim.SetLayerWeight(1, 1);
             Instantiate(poof, collision.transform.position, Quaternion.identity);
             Destroy(collision.gameObject, 0.4f);
         }
@@ -153,10 +231,13 @@ public class SlimeMovement : MonoBehaviour
     private void DoTransparent()
     {
         this.GetComponent<SpriteRenderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+        healthPoint = lastHp;
     }
 
     private void CancelTransparent()
     {
         this.GetComponent<SpriteRenderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 1f);
+        CancelInvoke("DoTransparent");
+        CancelInvoke("CancelTransparent");
     }
 }

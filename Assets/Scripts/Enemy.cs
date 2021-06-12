@@ -71,10 +71,12 @@ public abstract class Enemy : MonoBehaviour
     }
     public virtual void Damage()
     {
+        target.GetComponent<SlimeMovement>().healthPoint--;
         if (damage)
         {
-            //Debug.Log("Damage");
+            damage = false;
         }
+        Debug.Log("Damage");
     }
     public virtual void Death()
     {

@@ -10,7 +10,7 @@ public class EnemySpawn : MonoBehaviour
     private GameObject SkeletonWithSwordPrefab;
     [SerializeField]
     private float spawnDelay = 10;
-    private int monsterCount =3;
+    private int monsterCount = 3;
 
     private void Update()
     {
