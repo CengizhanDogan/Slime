@@ -171,13 +171,15 @@ MonoBehaviour:
   poofAnim: {fileID: 2410064087573956951}
   target: {fileID: 0}
   itemDrop: {fileID: 8600803902302594238, guid: 83caef072dc1c514bb9afdc317ffbb34, type: 3}
+  bone: {fileID: 377822473573110114, guid: 23e2481905e023e41be4850802232b8d, type: 3}
   itemDropClone: {fileID: 0}
+  fireBall: {fileID: 0}
+  es: {fileID: 0}
   sp: {fileID: 7113510860782491948}
   speed: 2
   attackDamage: 1
   damageDelay: 3.2
   healthPoint: 1
-  damage: 0
 --- !u!1001 &4999617094427393077
 PrefabInstance:
   m_ObjectHideFlags: 0

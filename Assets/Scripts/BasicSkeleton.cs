@@ -6,7 +6,19 @@ public class BasicSkeleton : Enemy
 {
     void Start()
     {
-        target = GameObject.FindGameObjectWithTag("Player");
+        if (gameObject.tag == "Nurse")
+        {
+            es = GameObject.FindGameObjectWithTag("Spawn").GetComponent<EnemySpawn>();
+            target = GameObject.FindGameObjectWithTag("Bone");
+            if (target == null)
+            {
+                return;
+            }
+        }
+        else
+        {
+            target = GameObject.FindGameObjectWithTag("Player");
+        }
     }
     private void Update()
     {
@@ -28,19 +40,34 @@ public class BasicSkeleton : Enemy
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" && gameObject.tag != "Nurse")
         {
             aiState = AiState.Attack;
-            damage = true;
-            InvokeRepeating("Damage", damageDelay / 2, damageDelay);
+            CancelInvoke("Move");
+            if (gameObject.tag == "Mage" && gameObject.tag != "SkeletonMage")
+            {
+                InvokeRepeating("Fireball", damageDelay / 5, damageDelay);
+            }
+            else
+            {
+                InvokeRepeating("Damage", damageDelay / 2, damageDelay);
+            }
+        }
+        if (gameObject.tag == "Nurse" && other.gameObject.tag == "Bone")
+        {
+            aiState = AiState.Attack;
+            Invoke("Heal", 0);
+            Instantiate(es.Skeletons[Random.Range(0, es.Skeletons.Count)], other.gameObject.transform.position, Quaternion.identity);
+            Destroy(other.gameObject);
         }
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" && gameObject.tag != "Nurse")
         {
             CancelInvoke("Damage");
-            damage = false;
+            CancelInvoke("Fireball");
+
             StartCoroutine(WaitAnim());
             IEnumerator WaitAnim()
             {

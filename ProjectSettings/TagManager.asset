@@ -6,6 +6,16 @@ TagManager:
   tags:
   - SkeletonBasic
   - Sword
+  - SkeletonMage
+  - Staff
+  - Mage
+  - Medkit
+  - Nurse
+  - SkeletonNurse
+  - Spear
+  - Bone
+  - Spawn
+  - SkeletonSpear
   layers:
   - Default
   - TransparentFX

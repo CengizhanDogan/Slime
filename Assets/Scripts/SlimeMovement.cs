@@ -9,17 +9,21 @@ public class SlimeMovement : MonoBehaviour
     public Animator anim;
     public SpriteRenderer sp;
     public GameObject poof;
+    public GameObject playerBall;
     public Collider2D slimeColl;
     public Collider2D swordColl;
 
     [Header("Gameplay Settings")]
     public float speed = 40f;
+    public float dashSpeed = 5f;
     public int healthPoint = 3;
     private int lastHp;
 
     [Header("Fields")]
     private bool isDashing = false;
     private bool isSlashing = false;
+    private bool isFireball = false;
+    private bool fire = true;
     private Vector3 target;
     private float possDiff;
 
@@ -36,6 +40,8 @@ public class SlimeMovement : MonoBehaviour
         switch (GameManager.Instance.currentState)
         {
             case GameState.Slime:
+                speed = 2;
+                dashSpeed = 5f;
                 InputControl();
                 Dash();
                 break;
@@ -44,30 +50,136 @@ public class SlimeMovement : MonoBehaviour
                 InputControl();
                 Slash();
                 break;
+            case GameState.Mage:
+                Invoke("Timer", 7);
+                InputControl();
+                Fireball();
+                break;
+            case GameState.Nurse:
+                speed = 3.5f;
+                dashSpeed = 5f;
+                Invoke("Timer", 7);
+                InputControl();
+                Dash();
+                break;
+            case GameState.Spear:
+                dashSpeed = 10f;
+                Invoke("Timer", 7);
+                InputControl();
+                Dash();
+                break;
             case GameState.End:
                 break;
         }
+
         #region Animation Layers
+        if (GameManager.Instance.currentState == GameState.Slime)
+        {
+            anim.SetLayerWeight(1, 0);
+            anim.SetLayerWeight(4, 0);
+            anim.SetLayerWeight(5, 0);
+            anim.SetLayerWeight(6, 0);
+            anim.SetLayerWeight(7, 0);
+            anim.SetLayerWeight(8, 0);
+            anim.SetLayerWeight(9, 0);
+            anim.SetLayerWeight(10, 0);
+            anim.SetLayerWeight(11, 0);
+            anim.SetLayerWeight(12, 0);
+            anim.SetLayerWeight(13, 0);
+            anim.SetLayerWeight(14, 0);
+        }
+        if (GameManager.Instance.currentState == GameState.Sword)
+        {
+            anim.SetLayerWeight(0, 0);
+            anim.SetLayerWeight(2, 0);
+            anim.SetLayerWeight(3, 0);
+            anim.SetLayerWeight(6, 0);
+            anim.SetLayerWeight(7, 0);
+            anim.SetLayerWeight(8, 0);
+            anim.SetLayerWeight(9, 0);
+            anim.SetLayerWeight(10, 0);
+            anim.SetLayerWeight(11, 0);
+            anim.SetLayerWeight(12, 0);
+            anim.SetLayerWeight(13, 0);
+            anim.SetLayerWeight(14, 0);
+        }
+        if (GameManager.Instance.currentState == GameState.Spear)
+        {
+            anim.SetLayerWeight(0, 0);
+            anim.SetLayerWeight(1, 0);
+            anim.SetLayerWeight(2, 0);
+            anim.SetLayerWeight(3, 0);
+            anim.SetLayerWeight(4, 0);
+            anim.SetLayerWeight(5, 0);
+            anim.SetLayerWeight(9, 0);
+            anim.SetLayerWeight(10, 0);
+            anim.SetLayerWeight(11, 0);
+            anim.SetLayerWeight(12, 0);
+            anim.SetLayerWeight(13, 0);
+            anim.SetLayerWeight(14, 0);
+        }
+        if (GameManager.Instance.currentState == GameState.Nurse)
+        {
+            anim.SetLayerWeight(0, 0);
+            anim.SetLayerWeight(1, 0);
+            anim.SetLayerWeight(2, 0);
+            anim.SetLayerWeight(3, 0);
+            anim.SetLayerWeight(4, 0);
+            anim.SetLayerWeight(5, 0);
+            anim.SetLayerWeight(6, 0);
+            anim.SetLayerWeight(7, 0);
+            anim.SetLayerWeight(8, 0);
+            anim.SetLayerWeight(12, 0);
+            anim.SetLayerWeight(13, 0);
+            anim.SetLayerWeight(14, 0);
+        }
+        if (GameManager.Instance.currentState == GameState.Mage)
+        {
+            anim.SetLayerWeight(0, 0);
+            anim.SetLayerWeight(1, 0);
+            anim.SetLayerWeight(2, 0);
+            anim.SetLayerWeight(3, 0);
+            anim.SetLayerWeight(4, 0);
+            anim.SetLayerWeight(5, 0);
+            anim.SetLayerWeight(6, 0);
+            anim.SetLayerWeight(7, 0);
+            anim.SetLayerWeight(8, 0);
+            anim.SetLayerWeight(9, 0);
+            anim.SetLayerWeight(10, 0);
+            anim.SetLayerWeight(11, 0);
+        }
         if (healthPoint == 3)
         {
             if (GameManager.Instance.currentState == GameState.Slime)
             {
                 anim.SetLayerWeight(0, 1);
-                anim.SetLayerWeight(1, 0);
                 anim.SetLayerWeight(2, 0);
                 anim.SetLayerWeight(3, 0);
-                anim.SetLayerWeight(4, 0);
-                anim.SetLayerWeight(5, 0);
 
             }
             if (GameManager.Instance.currentState == GameState.Sword)
             {
-                anim.SetLayerWeight(0, 0);
                 anim.SetLayerWeight(1, 1);
-                anim.SetLayerWeight(2, 0);
-                anim.SetLayerWeight(3, 0);
                 anim.SetLayerWeight(4, 0);
                 anim.SetLayerWeight(5, 0);
+            }
+            if (GameManager.Instance.currentState == GameState.Spear)
+            {
+                anim.SetLayerWeight(6, 1);
+                anim.SetLayerWeight(7, 0);
+                anim.SetLayerWeight(8, 0);
+            }
+            if (GameManager.Instance.currentState == GameState.Nurse)
+            {
+                anim.SetLayerWeight(9, 1);
+                anim.SetLayerWeight(10, 0);
+                anim.SetLayerWeight(11, 0);
+            }
+            if (GameManager.Instance.currentState == GameState.Mage)
+            {
+                anim.SetLayerWeight(12, 1);
+                anim.SetLayerWeight(13, 0);
+                anim.SetLayerWeight(14, 0);
             }
         }
         if (healthPoint == 2)
@@ -75,20 +187,32 @@ public class SlimeMovement : MonoBehaviour
             if (GameManager.Instance.currentState == GameState.Slime)
             {
                 anim.SetLayerWeight(0, 0);
-                anim.SetLayerWeight(3, 0);
-                anim.SetLayerWeight(4, 0);
-                anim.SetLayerWeight(1, 0);
-                anim.SetLayerWeight(5, 0);
                 anim.SetLayerWeight(2, 1);
+                anim.SetLayerWeight(3, 0);
             }
             if (GameManager.Instance.currentState == GameState.Sword)
             {
-                anim.SetLayerWeight(0, 0);
-                anim.SetLayerWeight(3, 0);
-                anim.SetLayerWeight(4, 1);
                 anim.SetLayerWeight(1, 0);
+                anim.SetLayerWeight(4, 1);
                 anim.SetLayerWeight(5, 0);
-                anim.SetLayerWeight(2, 0);
+            }
+            if (GameManager.Instance.currentState == GameState.Spear)
+            {
+                anim.SetLayerWeight(6, 0);
+                anim.SetLayerWeight(7, 1);
+                anim.SetLayerWeight(8, 0);
+            }
+            if (GameManager.Instance.currentState == GameState.Nurse)
+            {
+                anim.SetLayerWeight(9, 0);
+                anim.SetLayerWeight(10, 1);
+                anim.SetLayerWeight(11, 0);
+            }
+            if (GameManager.Instance.currentState == GameState.Mage)
+            {
+                anim.SetLayerWeight(12, 0);
+                anim.SetLayerWeight(13, 1);
+                anim.SetLayerWeight(14, 0);
             }
         }
         if (healthPoint <= 1)
@@ -96,22 +220,33 @@ public class SlimeMovement : MonoBehaviour
             if (GameManager.Instance.currentState == GameState.Slime)
             {
                 anim.SetLayerWeight(0, 0);
-                anim.SetLayerWeight(3, 1);
-                anim.SetLayerWeight(4, 0);
-                anim.SetLayerWeight(1, 0);
-                anim.SetLayerWeight(5, 0);
                 anim.SetLayerWeight(2, 0);
+                anim.SetLayerWeight(3, 1);
             }
             if (GameManager.Instance.currentState == GameState.Sword)
             {
-                anim.SetLayerWeight(0, 0);
-                anim.SetLayerWeight(3, 0);
-                anim.SetLayerWeight(4, 0);
                 anim.SetLayerWeight(1, 0);
+                anim.SetLayerWeight(4, 0);
                 anim.SetLayerWeight(5, 1);
-                anim.SetLayerWeight(2, 0);
             }
-
+            if (GameManager.Instance.currentState == GameState.Spear)
+            {
+                anim.SetLayerWeight(6, 0);
+                anim.SetLayerWeight(7, 0);
+                anim.SetLayerWeight(8, 1);
+            }
+            if (GameManager.Instance.currentState == GameState.Nurse)
+            {
+                anim.SetLayerWeight(9, 0);
+                anim.SetLayerWeight(10, 0);
+                anim.SetLayerWeight(11, 1);
+            }
+            if (GameManager.Instance.currentState == GameState.Mage)
+            {
+                anim.SetLayerWeight(12, 0);
+                anim.SetLayerWeight(13, 0);
+                anim.SetLayerWeight(14, 1);
+            }
         }
         #endregion
     }
@@ -129,7 +264,7 @@ public class SlimeMovement : MonoBehaviour
         {
             transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, 0, transform.rotation.z));
         }
-        if (!isDashing && !isSlashing)
+        if (!isDashing && !isSlashing && !isFireball)
         {
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             target.z = transform.position.z;
@@ -143,7 +278,7 @@ public class SlimeMovement : MonoBehaviour
         {
             anim.SetBool("Attack", true);
             anim.SetBool("Walk", false);
-            transform.position = Vector3.MoveTowards(transform.position, target, speed * 5 * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * dashSpeed * Time.deltaTime);
             StartCoroutine(DashFalse());
             IEnumerator DashFalse()
             {
@@ -171,6 +306,26 @@ public class SlimeMovement : MonoBehaviour
                 anim.SetBool("Attack", false);
             }
         }
+
+        if (isFireball)
+        {
+            if (fire)
+            {
+                Instantiate(playerBall, transform.position, Quaternion.identity);
+                fire = false;
+            }
+            anim.SetBool("Attack", true);
+            anim.SetBool("Walk", false);
+            StartCoroutine(SlashFalse());
+            IEnumerator SlashFalse()
+            {
+                yield return new WaitForSeconds(0.5f);
+                isFireball = false;
+                fire = true;
+                anim.SetBool("Attack", false);
+            }
+        }
+
         if (target == transform.position)
         {
             anim.SetBool("Walk", false);
@@ -200,6 +355,14 @@ public class SlimeMovement : MonoBehaviour
         }
     }
 
+    private void Fireball()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            isFireball = true;
+        }
+    }
+
     private void Timer()
     {
         GameManager.Instance.currentState = GameState.Slime;
@@ -208,7 +371,7 @@ public class SlimeMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "SkeletonBasic")
+        if (collision.gameObject.tag == "SkeletonBasic" && collision.gameObject.tag == "SkeletonSpear")
         {
             if (isDashing)
             {
@@ -220,11 +383,59 @@ public class SlimeMovement : MonoBehaviour
             }
         }
 
-        if (collision.gameObject.tag == "Sword")
+        if (collision.gameObject.tag == "SkeletonMage")
         {
-            GameManager.Instance.currentState = GameState.Sword;
-            Instantiate(poof, collision.transform.position, Quaternion.identity);
-            Destroy(collision.gameObject, 0.4f);
+            if (isDashing)
+            {
+                collision.transform.Find("Mage").gameObject.GetComponent<BasicSkeleton>().healthPoint--;
+            }
+            if (isSlashing)
+            {
+                collision.transform.Find("Mage").gameObject.GetComponent<BasicSkeleton>().healthPoint--;
+            }
+            if (collision.transform.Find("Mage").gameObject.GetComponent<BasicSkeleton>().healthPoint <= 0)
+            {
+                Destroy(collision.gameObject, 3);
+            }
+        }
+
+        if (collision.gameObject.tag == "Nurse")
+        {
+            if (isDashing)
+            {
+                collision.gameObject.GetComponent<BasicSkeleton>().healthPoint--;
+            }
+            if (isSlashing)
+            {
+                collision.gameObject.GetComponent<BasicSkeleton>().healthPoint--;
+            }
+        }
+        if (GameManager.Instance.currentState == GameState.Slime)
+        {
+            if (collision.gameObject.tag == "Sword")
+            {
+                GameManager.Instance.currentState = GameState.Sword;
+                Instantiate(poof, collision.transform.position, Quaternion.identity);
+                Destroy(collision.gameObject, 0.4f);
+            }
+            if (collision.gameObject.tag == "Spear")
+            {
+                GameManager.Instance.currentState = GameState.Spear;
+                Instantiate(poof, collision.transform.position, Quaternion.identity);
+                Destroy(collision.gameObject, 0.4f);
+            }
+            if (collision.gameObject.tag == "Medkit")
+            {
+                GameManager.Instance.currentState = GameState.Nurse;
+                Instantiate(poof, collision.transform.position, Quaternion.identity);
+                Destroy(collision.gameObject, 0.4f);
+            }
+            if (collision.gameObject.tag == "Staff")
+            {
+                GameManager.Instance.currentState = GameState.Mage;
+                Instantiate(poof, collision.transform.position, Quaternion.identity);
+                Destroy(collision.gameObject, 0.4f);
+            }
         }
     }
 
