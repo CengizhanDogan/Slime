@@ -24,6 +24,7 @@ public class DropBone : MonoBehaviour
     IEnumerator Drop()
     {
         yield return new WaitForSeconds(random);
+        SoundManager.Instance.dropBoneSound.Play();
         Instantiate(poof, transform.position, Quaternion.identity);
         damageCollClone = Instantiate(damageColl, transform.position, Quaternion.identity);
         Destroy(damageCollClone, 0.2f);

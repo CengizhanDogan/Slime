@@ -68,6 +68,7 @@ public class BasicSkeleton : Enemy
             else
             {
                 InvokeRepeating("Damage", damageDelay / 2, damageDelay);
+                SoundManager.Instance.slimeTakeDamage.Play();
             }
         }
         if (gameObject.tag == "Nurse" && other.gameObject.tag == "Bone")

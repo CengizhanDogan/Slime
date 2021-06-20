@@ -92,6 +92,7 @@ public abstract class Enemy : MonoBehaviour
         {
             anim.SetBool("Attack", true);
             anim.SetBool("Walk", false);
+            SoundManager.Instance.skeletonAttack.Play();
 
             StartCoroutine(SpearDash());
             IEnumerator SpearDash()
@@ -122,6 +123,9 @@ public abstract class Enemy : MonoBehaviour
     public virtual void Damage()
     {
         target.GetComponent<SlimeMovement>().healthPoint--;
+        //Mage Damage
+        SoundManager.Instance.slimeTakeDamage.Play();
+        SoundManager.Instance.skeletonAttack.Play();
     }
 
     public virtual void Heal()
@@ -143,6 +147,9 @@ public abstract class Enemy : MonoBehaviour
     public virtual void Death()
     {
         anim.SetBool("Death", true);
+        SoundManager.Instance.enemyInstantiateSound.Play();
+        SoundManager.Instance.skeletonDeath.Play();
+
         StartCoroutine(DestroyObject());
         IEnumerator DestroyObject()
         {
@@ -157,6 +164,4 @@ public abstract class Enemy : MonoBehaviour
             poofAnim.SetBool("Poof", true);
         }
     }
-
-
 }

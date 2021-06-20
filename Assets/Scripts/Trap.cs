@@ -9,6 +9,7 @@ public class Trap : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             GetComponent<Animator>().SetBool("Trap", true);
+            SoundManager.Instance.spikeSound.Play();
             collision.gameObject.GetComponent<SlimeMovement>().healthPoint--;
             StartCoroutine(AnimFalse());
             IEnumerator AnimFalse()

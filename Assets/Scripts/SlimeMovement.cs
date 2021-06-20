@@ -25,6 +25,7 @@ public class SlimeMovement : MonoBehaviour
     private bool isFireball = false;
     private bool fire = true;
     private bool speedMod = false;
+    private bool isDashingSound = false;
     private Vector3 target;
     private float possDiff;
 
@@ -39,7 +40,7 @@ public class SlimeMovement : MonoBehaviour
         //sp.sortingOrder = -(int)transform.position.y;
 
         switch (GameManager.Instance.currentState)
-        {
+        {            
             case GameState.Slime:
                 if (!speedMod)
                 {
@@ -260,8 +261,11 @@ public class SlimeMovement : MonoBehaviour
 
     private void InputControl()
     {
-
         possDiff = transform.position.x - target.x;
+        if (!SoundManager.Instance.movementSlimeSound.isPlaying)
+        {
+            SoundManager.Instance.movementSlimeSound.Play();
+        }
 
         if (transform.position.x < possDiff)
         {
@@ -276,6 +280,7 @@ public class SlimeMovement : MonoBehaviour
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             target.z = transform.position.z;
             transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+
             if (target != transform.position)
             {
                 anim.SetBool("Walk", true);
@@ -283,6 +288,7 @@ public class SlimeMovement : MonoBehaviour
         }
         if (isDashing)
         {
+            SoundManager.Instance.slimeDashAndAttack.Play();
             anim.SetBool("Attack", true);
             anim.SetBool("Walk", false);
             transform.position = Vector3.MoveTowards(transform.position, target, speed * dashSpeed * Time.deltaTime);
@@ -302,6 +308,8 @@ public class SlimeMovement : MonoBehaviour
             anim.SetBool("Walk", false);
             slimeColl.enabled = false;
             swordColl.enabled = true;
+            SoundManager.Instance.slimeSwordAttack.Play(); //CHECK LATER
+
             transform.position = Vector3.MoveTowards(transform.position, target, speed / 2 * Time.deltaTime);
             StartCoroutine(SlashFalse());
             IEnumerator SlashFalse()
@@ -319,6 +327,7 @@ public class SlimeMovement : MonoBehaviour
             if (fire)
             {
                 Instantiate(playerBall, transform.position, Quaternion.identity);
+                SoundManager.Instance.fireballSound.Play();
                 fire = false;
             }
             anim.SetBool("Attack", true);
@@ -421,24 +430,28 @@ public class SlimeMovement : MonoBehaviour
         {
             if (collision.gameObject.tag == "Sword")
             {
+                SoundManager.Instance.eatSound.Play();
                 GameManager.Instance.currentState = GameState.Sword;
                 Instantiate(poof, collision.transform.position, Quaternion.identity);
                 Destroy(collision.gameObject, 0.4f);
             }
             if (collision.gameObject.tag == "Spear")
             {
+                SoundManager.Instance.eatSound.Play();
                 GameManager.Instance.currentState = GameState.Spear;
                 Instantiate(poof, collision.transform.position, Quaternion.identity);
                 Destroy(collision.gameObject, 0.4f);
             }
             if (collision.gameObject.tag == "Medkit")
             {
+                SoundManager.Instance.eatSound.Play();
                 GameManager.Instance.currentState = GameState.Nurse;
                 Instantiate(poof, collision.transform.position, Quaternion.identity);
                 Destroy(collision.gameObject, 0.4f);
             }
             if (collision.gameObject.tag == "Staff")
             {
+                SoundManager.Instance.eatSound.Play();
                 GameManager.Instance.currentState = GameState.Mage;
                 Instantiate(poof, collision.transform.position, Quaternion.identity);
                 Destroy(collision.gameObject, 0.4f);
