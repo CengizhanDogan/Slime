@@ -23,6 +23,10 @@ public abstract class Enemy : MonoBehaviour
     public float attackDamage;
     public float damageDelay;
     public float healthPoint;
+    public int spearInt;
+
+    Vector3 moveDir;
+    public bool once = true;
 
     private void Awake()
     {
@@ -38,7 +42,7 @@ public abstract class Enemy : MonoBehaviour
 
     public void AbstractUpdate()
     {
-        sp.sortingOrder = -(int)transform.position.y;
+        //sp.sortingOrder = -(int)transform.position.y;
 
         if (healthPoint <= 0)
         {
@@ -84,26 +88,40 @@ public abstract class Enemy : MonoBehaviour
     }
     public virtual void Attack()
     {
-        anim.SetBool("Attack", true);
-        anim.SetBool("Walk", false);
-
-        if (gameObject.tag == "SkeletonSpear")
+        if (gameObject.tag == "SkeletonSpear" && spearInt == 1)
         {
+            anim.SetBool("Attack", true);
+            anim.SetBool("Walk", false);
+
             StartCoroutine(SpearDash());
             IEnumerator SpearDash()
             {
+                if (once)
+                {
+                    moveDir = (target.transform.position - transform.position).normalized;
+                    once = false;
+                }
                 yield return new WaitForSeconds(0.7f);
-
-                Vector3 moveDir = (target.transform.position - transform.position).normalized;
-                transform.position += moveDir * speed * 5 * Time.deltaTime;
-
+                Debug.Log(moveDir);
+                transform.position += moveDir * speed * 3 * Time.deltaTime;
+                yield return new WaitForSeconds(0.5f);
+                if (spearInt == 1)
+                {
+                    once = true;
+                    spearInt = 0;
+                    aiState = AiState.Move;
+                }
             }
+        }
+        else if (gameObject.tag != "SkeletonSpear")
+        {
+            anim.SetBool("Attack", true);
+            anim.SetBool("Walk", false);
         }
     }
     public virtual void Damage()
     {
         target.GetComponent<SlimeMovement>().healthPoint--;
-        Debug.Log("Damage");
     }
 
     public virtual void Heal()

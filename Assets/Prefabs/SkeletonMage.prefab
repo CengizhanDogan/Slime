@@ -240,6 +240,8 @@ MonoBehaviour:
   attackDamage: 0
   damageDelay: 5
   healthPoint: 1
+  spearInt: 0
+  once: 1
 --- !u!1001 &1189816563590886747
 PrefabInstance:
   m_ObjectHideFlags: 0

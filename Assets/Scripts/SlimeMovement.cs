@@ -24,6 +24,7 @@ public class SlimeMovement : MonoBehaviour
     private bool isSlashing = false;
     private bool isFireball = false;
     private bool fire = true;
+    private bool speedMod = false;
     private Vector3 target;
     private float possDiff;
 
@@ -35,12 +36,15 @@ public class SlimeMovement : MonoBehaviour
     }
     private void Update()
     {
-        sp.sortingOrder = -(int)transform.position.y;
+        //sp.sortingOrder = -(int)transform.position.y;
 
         switch (GameManager.Instance.currentState)
         {
             case GameState.Slime:
-                speed = 2;
+                if (!speedMod)
+                {
+                    speed = 2;
+                }
                 dashSpeed = 5f;
                 InputControl();
                 Dash();
@@ -56,7 +60,10 @@ public class SlimeMovement : MonoBehaviour
                 Fireball();
                 break;
             case GameState.Nurse:
-                speed = 3.5f;
+                if (!speedMod)
+                {
+                    speed = 3.5f;
+                }
                 dashSpeed = 5f;
                 Invoke("Timer", 7);
                 InputControl();
@@ -371,7 +378,7 @@ public class SlimeMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "SkeletonBasic" && collision.gameObject.tag == "SkeletonSpear")
+        if (collision.gameObject.tag == "SkeletonBasic" || collision.gameObject.tag == "SkeletonSpear")
         {
             if (isDashing)
             {
@@ -436,6 +443,28 @@ public class SlimeMovement : MonoBehaviour
                 Instantiate(poof, collision.transform.position, Quaternion.identity);
                 Destroy(collision.gameObject, 0.4f);
             }
+        }
+
+        if (collision.gameObject.tag == "BoneDamage")
+        {
+            healthPoint--;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Web")
+        {
+            speedMod = true;
+            speed = 1;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Web")
+        {
+            speedMod = false;
+            speed = 2;
         }
     }
 

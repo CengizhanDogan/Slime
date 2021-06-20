@@ -180,6 +180,8 @@ MonoBehaviour:
   attackDamage: 1
   damageDelay: 3.2
   healthPoint: 1
+  spearInt: 0
+  once: 1
 --- !u!1001 &4999617094427393077
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -243,6 +245,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8870434215760418657, guid: 38f82f7187292b84ba32d256c7ead1cc, type: 3}
+      propertyPath: m_SortingOrder
+      value: -4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38f82f7187292b84ba32d256c7ead1cc, type: 3}
 --- !u!4 &575981066527118269 stripped
@@ -257,6 +263,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7113510860782491949}
     m_Modifications:
+    - target: {fileID: 5784353326397656402, guid: d94fc49a6d90df143aacac85a49c9b83, type: 3}
+      propertyPath: m_SortingOrder
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5784353326397656403, guid: d94fc49a6d90df143aacac85a49c9b83, type: 3}
       propertyPath: m_RootOrder
       value: 0

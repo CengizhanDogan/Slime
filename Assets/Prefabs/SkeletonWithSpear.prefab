@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6751367492997421948}
   m_Layer: 0
   m_Name: SkeletonWithSpear
-  m_TagString: SkeletonBasic
+  m_TagString: SkeletonSpear
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -180,6 +180,8 @@ MonoBehaviour:
   attackDamage: 1
   damageDelay: 3
   healthPoint: 1
+  spearInt: 0
+  once: 1
 --- !u!1001 &6751367491984760592
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -236,6 +238,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8870434215760418657, guid: 38f82f7187292b84ba32d256c7ead1cc, type: 3}
+      propertyPath: m_SortingOrder
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8870434215760418657, guid: 38f82f7187292b84ba32d256c7ead1cc, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 0
       objectReference: {fileID: 0}
@@ -253,6 +259,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6751367492997421945}
     m_Modifications:
+    - target: {fileID: 5784353326397656402, guid: d94fc49a6d90df143aacac85a49c9b83, type: 3}
+      propertyPath: m_SortingOrder
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5784353326397656402, guid: d94fc49a6d90df143aacac85a49c9b83, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 0

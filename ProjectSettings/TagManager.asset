@@ -16,6 +16,9 @@ TagManager:
   - Bone
   - Spawn
   - SkeletonSpear
+  - Trap
+  - Web
+  - BoneDamage
   layers:
   - Default
   - TransparentFX

@@ -44,7 +44,24 @@ public class BasicSkeleton : Enemy
         {
             aiState = AiState.Attack;
             CancelInvoke("Move");
-            if (gameObject.tag == "Mage" && gameObject.tag != "SkeletonMage")
+            if (gameObject.tag == "SkeletonSpear")
+            {
+                spearInt++;
+                if (spearInt > 1)
+                {
+                    target.GetComponent<SlimeMovement>().healthPoint--;
+                    anim.SetBool("Attack", false);
+                    StartCoroutine(WaitAnim());
+                    IEnumerator WaitAnim()
+                    {
+                        yield return new WaitForSeconds(1.5f);
+                        aiState = AiState.Move;
+                    }
+                    once = true;
+                    spearInt = 0;
+                }
+            }
+            else if (gameObject.tag == "Mage" && gameObject.tag != "SkeletonMage")
             {
                 InvokeRepeating("Fireball", damageDelay / 5, damageDelay);
             }
@@ -63,7 +80,7 @@ public class BasicSkeleton : Enemy
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Player" && gameObject.tag != "Nurse")
+        if (other.gameObject.tag == "Player" && gameObject.tag != "Nurse" && gameObject.tag != "SkeletonSpear")
         {
             CancelInvoke("Damage");
             CancelInvoke("Fireball");

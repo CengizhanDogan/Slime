@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 0
   m_Sprite: {fileID: -2179121367002383484, guid: 9fece48a30228a04fbc247121e9d7559, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -172,6 +172,7 @@ MonoBehaviour:
   slimeColl: {fileID: 5511358610696549950}
   swordColl: {fileID: 2075445669}
   speed: 2
+  dashSpeed: 5
   healthPoint: 3
   _originalalpha: 50
 --- !u!61 &2075445669

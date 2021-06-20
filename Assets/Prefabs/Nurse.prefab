@@ -154,6 +154,8 @@ MonoBehaviour:
   attackDamage: 1
   damageDelay: 3
   healthPoint: 1
+  spearInt: 0
+  once: 1
 --- !u!70 &3742595023330533080
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -177,6 +179,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3742595023330533086}
     m_Modifications:
+    - target: {fileID: 5784353326397656402, guid: d94fc49a6d90df143aacac85a49c9b83, type: 3}
+      propertyPath: m_SortingOrder
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5784353326397656402, guid: d94fc49a6d90df143aacac85a49c9b83, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 0
